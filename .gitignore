@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# BindCraft outputs
+output/
+*.pdb
+*.fasta
+*.csv
+*.html
+*.png
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+/tmp/
+
+# PyRosetta (large files)
+PyRosetta/
+
+# AlphaFold params (large files, should be downloaded separately)
+bindcraft/params/
+
+# Temporary files
+*.tmp
+*.bak
+

@@ -1,0 +1,16 @@
+{
+  "design_path": "./output/PDL1",
+  "binder_name": "PDL1",
+  "starting_pdb": "./bindcraft/example/PDL1.pdb",
+  "chains": "A",
+  "target_hotspot_residues": "",
+  "lengths": [20, 50],
+  "number_of_final_designs": 1,
+  "load_previous_target_settings": "",
+  "design_protocol": "Default",
+  "prediction_protocol": "Default",
+  "interface_protocol": "AlphaFold2",
+  "template_protocol": "Default",
+  "filter_option": "Default"
+}
+
