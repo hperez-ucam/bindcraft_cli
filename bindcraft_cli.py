@@ -217,7 +217,15 @@ Configuration file should contain:
     
     # Generate settings paths
     target_settings_path = save_target_settings(config)
-    advanced_settings_path = generate_advanced_settings_path(config)
+    
+    # Allow custom advanced settings file, otherwise generate automatically
+    if config.get("advanced_settings_file"):
+        advanced_settings_path = config["advanced_settings_file"]
+        if not os.path.exists(advanced_settings_path):
+            raise FileNotFoundError(f"Advanced settings file not found: {advanced_settings_path}")
+    else:
+        advanced_settings_path = generate_advanced_settings_path(config)
+    
     filter_settings_path = generate_filter_settings_path(config)
     
     print(f"\n{'='*60}")
@@ -801,6 +809,25 @@ Configuration file should contain:
     print(f"Total trajectories: {trajectory_n}")
     print(f"Total time: {elapsed_text}")
     print(f"{'='*60}\n")
+    
+    # Generate PDF report
+    try:
+        log_progress("Generating PDF report...", "INFO")
+        # Import from the same directory
+        sys.path.insert(0, str(SCRIPT_DIR))
+        from generate_report import generate_pdf_report
+        report_path = os.path.join(target_settings["design_path"], 'BindCraft_Report.pdf')
+        if generate_pdf_report(args.config, target_settings["design_path"], report_path):
+            log_progress(f"✓ PDF report generated: {report_path}", "INFO")
+            print(f"\n✓ PDF report generated: {report_path}")
+        else:
+            log_progress("⚠ Could not generate PDF report (check if reportlab is installed)", "WARNING")
+    except ImportError as e:
+        log_progress(f"⚠ PDF report generation skipped: {e}", "WARNING")
+        print(f"\n⚠ PDF report generation skipped. Install reportlab: pip install reportlab")
+    except Exception as e:
+        log_progress(f"⚠ Error generating PDF report: {e}", "WARNING")
+        print(f"\n⚠ Error generating PDF report: {e}")
 
 if __name__ == "__main__":
     main()
