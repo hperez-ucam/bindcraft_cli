@@ -1,48 +1,48 @@
 # BindCraft CLI
 
-Este es un script de línea de comandos para ejecutar el pipeline de diseño de proteínas BindCraft, originalmente diseñado para Google Colab.
+A command-line script to run the BindCraft protein design pipeline, originally designed for Google Colab.
 
-## Requisitos
+## Requirements
 
 1. Python 3.7+
-2. BindCraft instalado (ver instalación en el notebook original)
-3. Todas las dependencias de BindCraft (ColabDesign, PyRosetta, etc.)
+2. BindCraft installed (see installation in the original notebook)
+3. All BindCraft dependencies (ColabDesign, PyRosetta, etc.)
 
-## Instalación
+## Installation
 
-### Opción 1: Instalación Automática (Recomendada)
+### Option 1: Automatic Installation (Recommended)
 
-Ejecuta el script de instalación que instala todas las dependencias automáticamente:
+Run the installation script that automatically installs all dependencies:
 
 ```bash
 ./install_bindcraft.sh
 ```
 
-Este script:
-- Clona el repositorio de BindCraft
-- Instala ColabDesign
-- Descarga los parámetros de AlphaFold2 (~4GB)
-- Instala PyRosetta
-- Configura todos los permisos necesarios
+This script:
+- Clones the BindCraft repository
+- Installs ColabDesign
+- Downloads AlphaFold2 parameters (~4GB)
+- Installs PyRosetta
+- Sets up all necessary permissions
 
-**Nota**: La instalación puede tardar varios minutos, especialmente la descarga de los parámetros de AlphaFold2.
+**Note**: Installation may take several minutes, especially downloading the AlphaFold2 parameters.
 
-### Opción 2: Instalación Manual
+### Option 2: Manual Installation
 
-Si prefieres instalar manualmente:
+If you prefer to install manually:
 
-1. Clonar el repositorio de BindCraft:
+1. Clone the BindCraft repository:
 ```bash
 git clone https://github.com/martinpacesa/BindCraft.git bindcraft
 ```
 
-2. Instalar las dependencias:
+2. Install dependencies:
 ```bash
 pip install git+https://github.com/sokrypton/ColabDesign.git
 pip install pyrosettacolabsetup
 ```
 
-3. Descargar los parámetros de AlphaFold2:
+3. Download AlphaFold2 parameters:
 ```bash
 mkdir -p bindcraft/params
 cd bindcraft/params
@@ -52,17 +52,17 @@ rm alphafold_params_2022-12-06.tar
 touch done.txt
 ```
 
-4. Configurar permisos:
+4. Set permissions:
 ```bash
 chmod +x bindcraft/functions/dssp
 chmod +x bindcraft/functions/DAlphaBall.gcc
 ```
 
-## Uso
+## Usage
 
-### 1. Crear archivo de configuración
+### 1. Create configuration file
 
-Crea un archivo JSON con los parámetros de diseño. Puedes usar `config.json` como plantilla:
+Create a JSON file with design parameters. You can use `config.json` as a template:
 
 ```json
 {
@@ -82,95 +82,94 @@ Crea un archivo JSON con los parámetros de diseño. Puedes usar `config.json` c
 }
 ```
 
-### 2. Ejecutar el pipeline
+### 2. Run the pipeline
 
-**Opción A: Usando el script wrapper (Recomendado)**
+**Option A: Using the wrapper script (Recommended)**
 
 ```bash
 ./run_bindcraft.sh --config config.json
 ```
 
-Este script activa automáticamente el entorno virtual y verifica que todas las dependencias estén disponibles.
+This script automatically activates the virtual environment and verifies that all dependencies are available.
 
-**Opción B: Activando el entorno virtual manualmente**
+**Option B: Manually activating the virtual environment**
 
 ```bash
 source venv/bin/activate
 python bindcraft_cli.py --config config.json
 ```
 
-**Nota importante**: Debes usar el Python del entorno virtual (`venv/`) donde están instaladas todas las dependencias (PyRosetta, ColabDesign, etc.). Si ejecutas `python` directamente sin activar el venv, obtendrás errores de importación.
+**Important note**: You must use the Python from the virtual environment (`venv/`) where all dependencies (PyRosetta, ColabDesign, etc.) are installed. If you run `python` directly without activating the venv, you will get import errors.
 
-## Parámetros de configuración
+## Configuration Parameters
 
-### Parámetros básicos
+### Basic Parameters
 
-- **design_path**: Ruta donde se guardarán los diseños generados
-- **binder_name**: Nombre que se usará como prefijo para los binders diseñados
-- **starting_pdb**: Ruta al archivo PDB de la proteína objetivo
-- **chains**: Cadenas a targetear (ej: "A" o "A,C")
-- **target_hotspot_residues**: Posiciones específicas a targetear (opcional, ej: "1,2-10" o "A1-10,B1-20")
-- **lengths**: Rango de longitudes del binder [min, max]
-- **number_of_final_designs**: Número de diseños finales requeridos
-- **load_previous_target_settings**: Ruta a configuración previa para continuar un diseño (opcional)
+- **design_path**: Path where generated designs will be saved
+- **binder_name**: Name to use as prefix for designed binders
+- **starting_pdb**: Path to the target protein PDB file
+- **chains**: Chains to target (e.g., "A" or "A,C")
+- **target_hotspot_residues**: Specific positions to target (optional, e.g., "1,2-10" or "A1-10,B1-20")
+- **lengths**: Binder length range [min, max]
+- **number_of_final_designs**: Number of final designs required
+- **load_previous_target_settings**: Path to previous configuration to continue a design (optional)
 
-### Parámetros avanzados
+### Advanced Parameters
 
-- **design_protocol**: Protocolo de diseño
-  - `"Default"`: Protocolo por defecto recomendado
-  - `"Beta-sheet"`: Promueve más estructuras de lámina beta
-  - `"Peptide"`: Optimizado para binders peptídicos helicoidales
+- **design_protocol**: Design protocol
+  - `"Default"`: Recommended default protocol
+  - `"Beta-sheet"`: Promotes more beta sheet structures
+  - `"Peptide"`: Optimized for helical peptide binders
 
-- **prediction_protocol**: Protocolo de predicción
-  - `"Default"`: Predicción de secuencia única del binder
-  - `"HardTarget"`: Usa conjetura inicial para mejorar predicción de complejos difíciles
+- **prediction_protocol**: Prediction protocol
+  - `"Default"`: Single sequence prediction of binder
+  - `"HardTarget"`: Uses initial guess to improve prediction of difficult complexes
 
-- **interface_protocol**: Método de diseño de interfaz
-  - `"AlphaFold2"`: Interfaz generada por AlphaFold2 (por defecto)
-  - `"MPNN"`: Usa MPNN soluble para optimizar la interfaz
+- **interface_protocol**: Interface design method
+  - `"AlphaFold2"`: Interface generated by AlphaFold2 (default)
+  - `"MPNN"`: Uses soluble MPNN to optimize the interface
 
-- **template_protocol**: Protocolo de template del objetivo
-  - `"Default"`: Permite flexibilidad limitada
-  - `"Masked"`: Permite mayor flexibilidad del objetivo a nivel de cadena lateral y backbone
+- **template_protocol**: Target template protocol
+  - `"Default"`: Allows limited flexibility
+  - `"Masked"`: Allows greater flexibility of the target at side chain and backbone level
 
-### Filtros
+### Filters
 
-- **filter_option**: Opción de filtros para los diseños
-  - `"Default"`: Filtros recomendados
-  - `"Peptide"`: Para diseño de binders peptídicos
-  - `"Relaxed"`: Más permisivos pero pueden resultar en menos éxitos experimentales
-  - `"Peptide_Relaxed"`: Más permisivos para péptidos no helicoidales
-  - `"None"`: Sin filtros (para benchmarking)
+- **filter_option**: Filter option for designs
+  - `"Default"`: Recommended filters
+  - `"Peptide"`: For peptide binder design
+  - `"Relaxed"`: More permissive but may result in fewer experimental successes
+  - `"Peptide_Relaxed"**: More permissive for non-helical peptides
+  - `"None"`: No filters (for benchmarking)
 
-## Estructura de salida
+## Output Structure
 
-El pipeline genera la siguiente estructura de directorios:
+The pipeline generates the following directory structure:
 
 ```
 design_path/
-├── Trajectory/          # Trajectorias generadas
-├── Trajectory/Relaxed/  # Trajectorias relajadas
-├── MPNN/                # Diseños MPNN
-├── MPNN/Relaxed/        # Diseños MPNN relajados
-├── Accepted/            # Diseños aceptados
-├── Rejected/            # Diseños rechazados
-├── trajectory_stats.csv # Estadísticas de trajectorias
-├── mpnn_design_stats.csv # Estadísticas de diseños MPNN
-└── final_design_stats.csv # Estadísticas finales
+├── Trajectory/          # Generated trajectories
+├── Trajectory/Relaxed/  # Relaxed trajectories
+├── MPNN/                # MPNN designs
+├── MPNN/Relaxed/        # Relaxed MPNN designs
+├── Accepted/            # Accepted designs
+├── Rejected/            # Rejected designs
+├── trajectory_stats.csv # Trajectory statistics
+├── mpnn_design_stats.csv # MPNN design statistics
+└── final_design_stats.csv # Final statistics
 ```
 
-## Notas
+## Notes
 
-- **IMPORTANTE**: Siempre usa el script `run_bindcraft.sh` o activa el entorno virtual antes de ejecutar. El Python del sistema no tiene las dependencias instaladas.
-- El script requiere que BindCraft esté instalado y configurado correctamente
-- Se necesita una GPU compatible con JAX para ejecutar el pipeline
-- El script puede continuar desde donde se quedó si se interrumpe, siempre que los archivos CSV existan
-- Para continuar un diseño previo, usa `load_previous_target_settings` apuntando al archivo JSON generado anteriormente
+- **IMPORTANT**: Always use the `run_bindcraft.sh` script or activate the virtual environment before running. The system Python does not have the dependencies installed.
+- The script requires BindCraft to be installed and configured correctly
+- A JAX-compatible GPU is needed to run the pipeline
+- The script can continue from where it left off if interrupted, as long as the CSV files exist
+- To continue a previous design, use `load_previous_target_settings` pointing to the JSON file generated previously
 
-## Diferencias con el notebook de Colab
+## Differences from the Colab Notebook
 
-- No requiere montar Google Drive
-- No usa widgets de IPython para visualización en tiempo real
-- Los contadores de progreso se muestran en la consola
-- La configuración se lee desde un archivo JSON en lugar de widgets
-
+- Does not require mounting Google Drive
+- Does not use IPython widgets for real-time visualization
+- Progress counters are shown in the console
+- Configuration is read from a JSON file instead of widgets

@@ -1,6 +1,6 @@
 #!/bin/bash
-# Script de instalación de BindCraft en entorno virtual
-# Este script crea un entorno virtual e instala todas las dependencias posibles
+# BindCraft installation script for virtual environment
+# This script creates a virtual environment and installs all possible dependencies
 
 set -e
 
@@ -8,99 +8,99 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VENV_DIR="$SCRIPT_DIR/venv"
 
 echo "=========================================="
-echo "Instalación de BindCraft en Entorno Virtual"
+echo "BindCraft Installation in Virtual Environment"
 echo "=========================================="
 
-# Crear entorno virtual si no existe
+# Create virtual environment if it doesn't exist
 if [ ! -d "$VENV_DIR" ]; then
-    echo "1. Creando entorno virtual..."
+    echo "1. Creating virtual environment..."
     python3 -m venv "$VENV_DIR"
-    echo "✓ Entorno virtual creado en $VENV_DIR"
+    echo "✓ Virtual environment created in $VENV_DIR"
 else
-    echo "✓ Entorno virtual ya existe"
+    echo "✓ Virtual environment already exists"
 fi
 
-# Activar entorno virtual
+# Activate virtual environment
 echo ""
-echo "2. Activando entorno virtual..."
+echo "2. Activating virtual environment..."
 source "$VENV_DIR/bin/activate"
 
-# Actualizar pip
+# Update pip
 echo ""
-echo "3. Actualizando pip, setuptools y wheel..."
+echo "3. Updating pip, setuptools and wheel..."
 pip install --upgrade pip setuptools wheel
 
-# Instalar NumPy compatible
+# Install compatible NumPy
 echo ""
-echo "4. Instalando NumPy < 2.0 (compatible con pandas)..."
+echo "4. Installing NumPy < 2.0 (compatible with pandas)..."
 pip install 'numpy<2' pandas
 
-# Instalar ColabDesign
+# Install ColabDesign
 echo ""
-echo "5. Instalando ColabDesign..."
+echo "5. Installing ColabDesign..."
 pip install git+https://github.com/sokrypton/ColabDesign.git
 
-# Instalar PyRosetta usando pyrosetta-installer
+# Install PyRosetta using pyrosetta-installer
 echo ""
-echo "6. Instalando PyRosetta..."
-echo "   (Esto puede tardar varios minutos, ~1.7 GB)"
+echo "6. Installing PyRosetta..."
+echo "   (This may take several minutes, ~1.7 GB)"
 pip install pyrosettacolabsetup
 pip install pyrosetta-installer
 python -c "import pyrosetta_installer; pyrosetta_installer.install_pyrosetta()"
-echo "✓ PyRosetta instalado"
+echo "✓ PyRosetta installed"
 
-# Verificar que bindcraft existe
+# Verify that bindcraft exists
 echo ""
-echo "7. Verificando BindCraft..."
+echo "7. Verifying BindCraft..."
 if [ ! -d "$SCRIPT_DIR/bindcraft" ]; then
-    echo "   Clonando repositorio de BindCraft..."
+    echo "   Cloning BindCraft repository..."
     git clone https://github.com/martinpacesa/BindCraft.git "$SCRIPT_DIR/bindcraft"
     chmod +x "$SCRIPT_DIR/bindcraft/functions/dssp"
     chmod +x "$SCRIPT_DIR/bindcraft/functions/DAlphaBall.gcc"
-    echo "✓ BindCraft clonado"
+    echo "✓ BindCraft cloned"
 else
-    echo "✓ BindCraft ya existe"
+    echo "✓ BindCraft already exists"
 fi
 
-# Verificar parámetros de AlphaFold2
+# Verify AlphaFold2 parameters
 echo ""
-echo "8. Verificando parámetros de AlphaFold2..."
+echo "8. Verifying AlphaFold2 parameters..."
 if [ ! -f "$SCRIPT_DIR/bindcraft/params/done.txt" ]; then
-    echo "   ⚠️  Parámetros de AlphaFold2 no encontrados"
-    echo "   Para descargarlos, ejecuta:"
+    echo "   ⚠️  AlphaFold2 parameters not found"
+    echo "   To download them, run:"
     echo "   cd $SCRIPT_DIR/bindcraft/params"
     echo "   aria2c -x 16 https://storage.googleapis.com/alphafold/alphafold_params_2022-12-06.tar"
     echo "   tar -xf alphafold_params_2022-12-06.tar"
     echo "   touch done.txt"
 else
-    echo "✓ Parámetros de AlphaFold2 encontrados"
+    echo "✓ AlphaFold2 parameters found"
 fi
 
-# Verificar GPU
+# Check GPU
 echo ""
 echo "=========================================="
-echo "⚠️  IMPORTANTE: Requisito de GPU"
+echo "⚠️  IMPORTANT: GPU Requirement"
 echo "=========================================="
 echo ""
-echo "BindCraft requiere una GPU compatible con CUDA para ejecutarse."
-echo "Sin GPU, el script puede cargar pero no ejecutar el pipeline."
+echo "BindCraft requires a CUDA-compatible GPU to run."
+echo "Without GPU, the script can load but will not execute the pipeline."
 echo ""
-echo "Para instalar JAX con soporte CUDA:"
+echo "To install JAX with CUDA support:"
 echo "  pip install --upgrade 'jax[cuda12]' -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html"
 echo ""
 
-# Verificar instalación
+# Verify installation
 echo ""
 echo "=========================================="
-echo "Resumen de Instalación"
+echo "Installation Summary"
 echo "=========================================="
 echo ""
-echo "Entorno virtual: $VENV_DIR"
+echo "Virtual environment: $VENV_DIR"
 echo ""
-echo "Para activar el entorno virtual:"
+echo "To activate the virtual environment:"
 echo "  source $VENV_DIR/bin/activate"
 echo ""
-echo "Para ejecutar BindCraft:"
+echo "To run BindCraft:"
 echo "  source $VENV_DIR/bin/activate"
 echo "  python bindcraft_cli.py --config config.json"
 echo ""

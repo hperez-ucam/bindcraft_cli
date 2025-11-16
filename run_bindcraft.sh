@@ -1,32 +1,31 @@
 #!/bin/bash
-# Wrapper script para ejecutar BindCraft CLI con el entorno virtual activado
+# Wrapper script to run BindCraft CLI with virtual environment activated
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# Verificar que el entorno virtual existe
+# Check if virtual environment exists
 if [ ! -d "venv" ]; then
-    echo "❌ Error: Entorno virtual no encontrado en: $SCRIPT_DIR/venv"
+    echo "❌ Error: Virtual environment not found in: $SCRIPT_DIR/venv"
     echo ""
-    echo "Por favor, ejecuta primero:"
+    echo "Please run first:"
     echo "  ./install_venv.sh"
     exit 1
 fi
 
-# Activar el entorno virtual
+# Activate virtual environment
 source venv/bin/activate
 
-# Verificar que PyRosetta está disponible
+# Check if PyRosetta is available
 if ! python -c "import pyrosetta" 2>/dev/null; then
-    echo "❌ Error: PyRosetta no está disponible en el entorno virtual"
+    echo "❌ Error: PyRosetta is not available in the virtual environment"
     echo ""
-    echo "Por favor, ejecuta:"
+    echo "Please run:"
     echo "  source venv/bin/activate"
     echo "  pip install pyrosetta-installer"
     echo "  pyrosetta-installer --install"
     exit 1
 fi
 
-# Ejecutar el script CLI con todos los argumentos pasados
+# Run the CLI script with all passed arguments
 python bindcraft_cli.py "$@"
-
